@@ -21,7 +21,7 @@ model MPP {
   user           User      @relation(fields: [userId], references: [id])
   userId         String    @unique
   id             String    @id @default(uuid())
-  No             Int       @default(autoincrement())
+  isApproved     String    @default("PENDING")
   Employee_ID    String?
   Employee_Name  String?
   Join_Date      DateTime? @db.Date

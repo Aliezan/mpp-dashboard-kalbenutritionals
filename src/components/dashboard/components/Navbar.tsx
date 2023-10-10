@@ -1,13 +1,6 @@
 'use client';
 
 import React, { FC } from 'react';
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import {
@@ -17,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import ProfileAction from './ProfileAction';
 
 const Navbar: FC = () => {
@@ -25,11 +17,11 @@ const Navbar: FC = () => {
 
   return (
     <nav className='bg-white dark:bg-zinc-950 border-b-[0.5px] border-gray-500 sticky z-10 w-full mb-4'>
-      <div className='flex justify-center gap-[300px] h-[70px]'>
+      <div className='flex justify-between gap-[300px] h-[70px] px-[70px]'>
         <div className='pt-[23px]'>
           <h1 className='font-bold'>MPP Dashboard</h1>
         </div>
-        <div className='flex gap-2'>
+        {/* <div className='flex gap-2'>
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -69,7 +61,7 @@ const Navbar: FC = () => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
-        </div>
+        </div> */}
         <div className='flex gap-[50px]'>
           <ProfileAction />
           <div className='mt-[14px]'>
