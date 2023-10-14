@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import { usePathname } from 'next/navigation';
 import { Navbar, Sidebar } from '@/components';
 import SidebarViewModel from '@/components/dashboard/viewModel/Sidebar.viewModel';
+import ContentWrapper from './ContentWrapper';
 
 interface PathCheckerProps {
   children: React.ReactNode;
@@ -19,9 +20,11 @@ const PathChecker: FC<PathCheckerProps> = ({ children }) => {
     <>
       {!isExcluded ? (
         <>
-          <Navbar />
+          <nav>
+            <Navbar />
+          </nav>
           <Sidebar expand={isExpand} handleExpand={setIsExpand} />
-          {children}
+          <ContentWrapper>{children}</ContentWrapper>
         </>
       ) : (
         children

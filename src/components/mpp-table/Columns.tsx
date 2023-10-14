@@ -1,40 +1,61 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  // DropdownMenuItem,
-  DropdownMenuLabel,
-  // DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { z } from 'zod';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 
 /* TODO:
- * APPLY MORE TIGHT SCHEMA VALIDATION ON TABLE DATA IF POSSIBLE
+ APPLY MORE TIGHT SCHEMA VALIDATION ON TABLE DATA IF POSSIBLE
+ I.E, ENUMS
  */
 
-interface MPPTableType {
-  MPP: number | null;
-  id: string | null;
-  Employee_ID: string | null;
-  Employee_Name: string | null;
-  Join_Date: string | null;
-  Job_Title_Name: string | null;
-  Org_Group_Name: string | null;
-  Job_Level_Code: string | null;
-  Category: string | null;
-  Status: string | null;
-  Actual: number | null;
-  Gap: number | null;
-}
+const MPPTableTypeSchema = z.object({
+  MPP: z.number().nullable(),
+  Employee_ID: z.string().nullable(),
+  Employee_Name: z.string().nullable(),
+  Join_Date: z.string().nullable(),
+  Job_Title_Name: z.string().nullable(),
+  Org_Group_Name: z.string().nullable(),
+  Job_Level_Code: z.string().nullable(),
+  Category: z.string().nullable(),
+  Status: z.string().nullable(),
+  Actual: z.number().nullable(),
+  Gap: z.number().nullable(),
+  isApproved: z.string().nullable(),
+});
+
+type MPPTableType = z.infer<typeof MPPTableTypeSchema>;
 
 export const Columns: ColumnDef<MPPTableType>[] = [
   {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'No',
     header: 'No',
+    cell: ({ row }) => {
+      const index = row.index + 1;
+      return <div>{index}</div>;
+    },
   },
   {
     accessorKey: 'Employee_ID',
@@ -100,21 +121,11 @@ export const Columns: ColumnDef<MPPTableType>[] = [
     header: 'Gap',
   },
   {
-    id: 'actions',
-    cell: () => (
-      // const mpp = row.original;
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='h-8 w-8 p-0'>
-            <span className='sr-only'>Open menu</span>
-            <MoreHorizontal className='h-4 w-4' />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align='end'>
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    accessorKey: 'isApproved',
+    header: 'Approval Status',
+    cell: ({ row }) => {
+      const status = row.getValue('isApproved') as string;
+      return <Badge>{status}</Badge>;
+    },
   },
 ];

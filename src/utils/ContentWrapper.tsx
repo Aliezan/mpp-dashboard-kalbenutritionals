@@ -3,16 +3,16 @@
 import React, { FC } from 'react';
 import useStore from '@/store/store';
 
-interface HomeContentProps {
+interface ContentWrapperProps {
   children: React.ReactNode;
 }
 
-const HomeContent: FC<HomeContentProps> = ({ children }) => {
+const ContentWrapper: FC<ContentWrapperProps> = ({ children }) => {
   const { isExpand } = useStore();
 
   return (
     <div
-      className={`col-end-13 col-span-11 transition-all duration-200 ease-out  ${
+      className={`pt-[70px] col-end-13 col-span-11 transition-all duration-200 ease-out  ${
         isExpand ? 'ml-[190px]' : 'ml-10'
       }`}
     >
@@ -21,4 +21,4 @@ const HomeContent: FC<HomeContentProps> = ({ children }) => {
   );
 };
 
-export default HomeContent;
+export default ContentWrapper;

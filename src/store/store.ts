@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { SidebarSlice } from './slices/Sidebar';
+import createSidebarSlice from './slices/Sidebar/SidebarSlice';
 
 export type StateFromFunctions<T extends [...any]> = T extends [
   infer F,
@@ -10,10 +10,10 @@ export type StateFromFunctions<T extends [...any]> = T extends [
     : unknown
   : unknown;
 
-type Store = StateFromFunctions<[typeof SidebarSlice]>;
+type Store = StateFromFunctions<[typeof createSidebarSlice]>;
 
 const useStore = create<Store>()((...a) => ({
-  ...SidebarSlice(...a),
+  ...createSidebarSlice(...a),
 }));
 
 export default useStore;
