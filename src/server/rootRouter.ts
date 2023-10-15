@@ -1,7 +1,8 @@
+import { tableRouter, approvalRouter } from '@/server/routers';
 import { router } from './trpc';
-import { tableRouter } from './routers/table';
 
 export const appRouter = router({
   tableRouter,
+  approvalRouter,
 });
 export type AppRouter = typeof appRouter;
