@@ -36,7 +36,6 @@ next-env.d.ts
 
 # .yarn folder and files
 /.yarn
-yarn.lock
 
 # .env file
 .env
