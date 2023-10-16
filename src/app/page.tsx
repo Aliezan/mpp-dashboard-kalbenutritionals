@@ -1,7 +1,9 @@
+/* eslint-disable no-nested-ternary */
+
 import React, { FC } from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
-import StatusMPP from '@/components/admin/StatusMPP';
+import { StatusMPP } from '@/components';
 
 const Home: FC = async () => {
   const session = await getServerSession(authOptions);
@@ -14,10 +16,18 @@ const Home: FC = async () => {
             <h1 className='font-bold text-[30px]'>Home</h1>
             <p>Selamat Datang {session?.user?.name}!</p>
             {session?.user?.role === 'ADMIN' ? (
-              <div className='flex mt-6'>
+              <div className='flex mt-6 gap-3'>
                 <StatusMPP />
+                {/* <DataInput /> */}
               </div>
-            ) : null}
+            ) : session?.user?.role === 'SUPER' ? (
+              <div className='flex mt-6 gap-3'>
+                <StatusMPP />
+                {/* <DataInput /> */}
+              </div>
+            ) : (
+              <h1>USER</h1>
+            )}
           </div>
         </div>
       </div>
