@@ -3,7 +3,7 @@
 import React, { FC } from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
-import { StatusMPP, DataInput } from '@/components';
+import { StatusMPP } from '@/components';
 
 const Home: FC = async () => {
   const session = await getServerSession(authOptions);
@@ -18,12 +18,12 @@ const Home: FC = async () => {
             {session?.user?.role === 'ADMIN' ? (
               <div className='flex mt-6 gap-3'>
                 <StatusMPP />
-                <DataInput />
+                {/* <DataInput /> */}
               </div>
             ) : session?.user?.role === 'SUPER' ? (
               <div className='flex mt-6 gap-3'>
                 <StatusMPP />
-                <DataInput />
+                {/* <DataInput /> */}
               </div>
             ) : (
               <h1>USER</h1>
