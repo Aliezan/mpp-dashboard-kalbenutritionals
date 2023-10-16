@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+
 import MPPTable from '@/components/mpp-table/MPPTable';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
@@ -15,11 +17,15 @@ const ManageMPP: FC = async () => {
             <h1 className='font-bold text-[30px]'>Manage MPP</h1>
             {session?.user?.role === 'ADMIN' ? (
               <p>Input data MPP yang telah disetujui</p>
+            ) : session?.user?.role === 'SUPER' ? (
+              <p>MPP SUPER</p>
             ) : (
-              <p>Lihat dan periksa pengajuan MPP</p>
+              <>
+                <p>Lihat dan Periksa MPP</p>
+                <MPPTable />
+                <MPPGap />
+              </>
             )}
-            <MPPTable />
-            <MPPGap />
           </div>
         </div>
       </div>
