@@ -27,15 +27,24 @@ const StatusMPP: FC = () => {
         <div className='flex gap-10'>
           <div className='space-y-2'>
             <Badge variant='secondary'>Pending</Badge>
-            <p className='px-2.5'>{StatusMPPData?.pendingCount}</p>
+            <p className='px-2.5'>
+              {(StatusMPPData?.pendingCount as { isApproved: number })
+                ?.isApproved ?? 0}
+            </p>
           </div>
           <div className='space-y-2'>
             <Badge variant='destructive'>Ditolak</Badge>
-            <p className='px-2.5'>{StatusMPPData?.rejectedCount}</p>
+            <p className='px-2.5'>
+              {(StatusMPPData?.rejectedCount as { isApproved: number })
+                ?.isApproved ?? 0}
+            </p>
           </div>
           <div className='space-y-2'>
             <Badge>Berhasil</Badge>
-            <p className='px-2.5'>{StatusMPPData?.approvedCount}</p>
+            <p className='px-2.5'>
+              {(StatusMPPData?.approvedCount as { isApproved: number })
+                ?.isApproved ?? 0}
+            </p>
           </div>
         </div>
       </CardContent>

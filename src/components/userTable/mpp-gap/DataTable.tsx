@@ -23,8 +23,8 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,27 +60,22 @@ export const DataTable = <TData, TValue>({
   return (
     <div>
       <div>
-        <h1 className='font-bold'>MPP Actual Data</h1>
+        <h1 className='font-bold'>MPP Gap Data</h1>
       </div>
-      <div className='flex items-center py-4 gap-4'>
+      <div className='flex items-center py-4'>
         <Input
-          placeholder='Cari Nama Employee'
+          placeholder='Cari Job Title'
           value={
-            (table.getColumn('Employee_Name')?.getFilterValue() as string) ?? ''
+            (table.getColumn('Job_Title_Name')?.getFilterValue() as string) ??
+            ''
           }
           onChange={(event) =>
-            table.getColumn('Employee_Name')?.setFilterValue(event.target.value)
+            table
+              .getColumn('Job_Title_Name')
+              ?.setFilterValue(event.target.value)
           }
-          className='w-[300px]'
+          className='max-w-sm'
         />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <>
-            <div className='flex-1 text-sm text-muted-foreground'>
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-          </>
-        )}
       </div>
       <div className='rounded-md border'>
         <Table>
@@ -120,13 +115,6 @@ export const DataTable = <TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={
-                    row.getValue('isApproved') === 'PENDING'
-                      ? 'bg-yellow-100 dark:bg-yellow-800'
-                      : row.getValue('isApproved') === 'REJECTED'
-                      ? 'bg-red-100 dark:bg-red-800'
-                      : ''
-                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
