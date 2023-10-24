@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "MPP" ALTER COLUMN "Employee_ID" DROP NOT NULL;

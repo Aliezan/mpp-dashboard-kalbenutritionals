@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
 import React, { FC } from 'react';
 import MPPGap from '@/components/mpp-gap/MPPGap';
+import ManageMPPAdmin from '@/components/admin/ManageMPPAdmin';
 
 const ManageMPP: FC = async () => {
   const session = await getServerSession(authOptions);
@@ -14,9 +15,10 @@ const ManageMPP: FC = async () => {
       <div className='w-full'>
         <div className='container px-20 mx-auto'>
           <div>
-            <h1 className='font-bold text-[30px]'>Manage MPP</h1>
             {session?.user?.role === 'ADMIN' ? (
-              <p>Input data MPP yang telah disetujui</p>
+              <>
+                <ManageMPPAdmin />
+              </>
             ) : session?.user?.role === 'SUPER' ? (
               <p>MPP SUPER</p>
             ) : (

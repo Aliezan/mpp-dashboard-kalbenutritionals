@@ -13,7 +13,6 @@ import { Checkbox } from '@/components/ui/checkbox';
  */
 
 const MPPTableTypeSchema = z.object({
-  MPP: z.number().nullable(),
   Employee_ID: z.string().nullable(),
   Employee_Name: z.string().nullable(),
   Join_Date: z.string().nullable(),
@@ -22,9 +21,9 @@ const MPPTableTypeSchema = z.object({
   Job_Level_Code: z.string().nullable(),
   Category: z.string().nullable(),
   Status: z.string().nullable(),
-  Actual: z.number().nullable(),
-  Gap: z.number().nullable(),
-  isApproved: z.string().nullable(),
+  MPP: z.string().nullable(),
+  Actual: z.string().nullable(),
+  Gap: z.string().nullable(),
 });
 
 type MPPTableType = z.infer<typeof MPPTableTypeSchema>;

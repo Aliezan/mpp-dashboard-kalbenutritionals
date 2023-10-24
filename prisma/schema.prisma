@@ -32,21 +32,22 @@ model User {
 }
 
 model MPP {
-  user           User     @relation(fields: [userId], references: [id])
-  userId         String
+  user           User?    @relation(fields: [userId], references: [id])
+  userId         String?
   id             String   @id @default(uuid())
   isApproved     Status   @default(PENDING)
-  Employee_ID    String
-  Employee_Name  String
-  Join_Date      DateTime @db.Date
-  Job_Title_Name String
-  Org_Group_Name String
-  Job_Level_Code String
-  Category       String
-  Status         String
-  MPP            Int      @default(1)
-  Actual         Int      @default(1)
-  Gap            Int      @default(0)
+  Employee_ID    String?
+  Employee_Name  String?
+  Join_Date      String?
+  Job_Title_Name String?
+  Org_Group_Name String?
+  Job_Level_Code String?
+  Category       String?
+  Status         String?
+  MPP            String?  @default("1")
+  Actual         String?  @default("1")
+  Gap            String?  @default("0")
+  createdAt      DateTime @default(now())
 }
 
 model DeficitMPP {
