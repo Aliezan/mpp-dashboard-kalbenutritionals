@@ -52,24 +52,48 @@ const adminRouter = router({
       return inputMPP.count;
     }),
 
-  getMPPGap: privateProcedure.query(async () => {
-    const MPPGap = await prisma.mPP.findMany({
-      where: {
-        Gap: '-1',
-      },
-      select: {
-        Org_Group_Name: true,
-        Job_Title_Name: true,
-        Job_Level_Code: true,
-        Category: true,
-        Status: true,
-        MPP: true,
-        Actual: true,
-        Gap: true,
-      },
-    });
-    return MPPGap;
-  }),
+  getMonthlyMPPGap: privateProcedure
+    .input(
+      z.object({
+        month: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const currentYear = new Date().getFullYear();
+      const date = new Date(Date.parse(`${input.month} 1, ${currentYear}`));
+      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+      const lastDayOfMonth = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0,
+      );
+      const MPPGap = await prisma.mPP.findMany({
+        where: {
+          AND: [
+            {
+              createdAt: {
+                gte: firstDayOfMonth,
+                lte: lastDayOfMonth,
+              },
+            },
+            {
+              Gap: '-1',
+            },
+          ],
+        },
+        select: {
+          Org_Group_Name: true,
+          Job_Title_Name: true,
+          Job_Level_Code: true,
+          Category: true,
+          Status: true,
+          MPP: true,
+          Actual: true,
+          Gap: true,
+        },
+      });
+      return MPPGap;
+    }),
 
   getMonthlyMPP: privateProcedure
     .input(

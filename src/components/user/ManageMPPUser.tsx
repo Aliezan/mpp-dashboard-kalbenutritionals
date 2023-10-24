@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
-import { MPPTableAdmin, MPPGapAdmin, SelectMonth } from '@/components';
+import { MPPTableUser, MPPGapUser, SelectMonth } from '@/components';
 
-const ManageMPPAdmin: FC = () => (
+const ManageMPPUser: FC = () => (
   <div>
     <div className='flex justify-between'>
       <h1 className='font-bold text-[30px]'>Manage MPP</h1>
       <SelectMonth />
     </div>
-    <MPPTableAdmin />
-    <MPPGapAdmin />
+    <MPPTableUser />
+    <MPPGapUser />
   </div>
 );
 
-export default ManageMPPAdmin;
+export default ManageMPPUser;

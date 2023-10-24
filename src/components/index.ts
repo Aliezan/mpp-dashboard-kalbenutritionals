@@ -4,3 +4,8 @@ export { default as Navbar } from '@/components/dashboard/Navbar';
 export { default as Sidebar } from '@/components/dashboard/Sidebar';
 export { default as StatusMPP } from '@/components/admin/StatusMPP';
 export { default as DataInput } from '@/components/admin/DataInput';
+export { default as MPPTableAdmin } from '@/components/adminTable/mpp-table-admin/MPPTable';
+export { default as MPPGapAdmin } from '@/components/adminTable/mpp-gap-admin/MPPGap';
+export { default as SelectMonth } from '@/components/dashboard/SelectMonth';
+export { default as MPPTableUser } from '@/components/userTable/mpp-table/MPPTable';
+export { default as MPPGapUser } from '@/components/userTable/mpp-gap/MPPGap';
