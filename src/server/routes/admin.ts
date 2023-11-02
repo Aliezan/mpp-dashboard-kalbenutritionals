@@ -144,6 +144,90 @@ const adminRouter = router({
       });
       return MonthlyMPP;
     }),
+
+  getUsers: privateProcedure.query(async () => {
+    const users = await prisma.user.findMany({
+      where: {
+        role: {
+          notIn: ['ADMIN', 'SUPER'],
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        createdAt: true,
+        Org_Group_Name: true,
+      },
+    });
+    return users;
+  }),
+
+  addUser: privateProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+        role: z.enum(['USER', 'ADMIN', 'SUPER']),
+        OrgGroupName: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          password: input.password,
+          role: input.role,
+          Org_Group_Name: input.OrgGroupName,
+        },
+      });
+      return user;
+    }),
+
+  deleteUser: privateProcedure
+    .input(
+      z.object({
+        email: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.delete({
+        where: {
+          email: input.email,
+        },
+      });
+      return user;
+    }),
+
+  editUser: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+        role: z.enum(['USER', 'ADMIN', 'SUPER']),
+        OrgGroupName: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          email: input.email,
+          password: input.password,
+          role: input.role,
+          Org_Group_Name: input.OrgGroupName,
+        },
+      });
+      return user;
+    }),
 });
 
 export default adminRouter;

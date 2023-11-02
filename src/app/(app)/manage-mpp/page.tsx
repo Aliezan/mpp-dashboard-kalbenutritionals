@@ -13,7 +13,7 @@ const ManageMPP: FC = async () => {
     <section className='mt-[40px]'>
       <div className='w-full'>
         <div className='container px-20 mx-auto'>
-          <div>
+          <>
             {session?.user?.role === 'ADMIN' ? (
               <ManageMPPAdmin />
             ) : session?.user?.role === 'SUPER' ? (
@@ -21,7 +21,7 @@ const ManageMPP: FC = async () => {
             ) : (
               <ManageMPPUser />
             )}
-          </div>
+          </>
         </div>
       </div>
     </section>

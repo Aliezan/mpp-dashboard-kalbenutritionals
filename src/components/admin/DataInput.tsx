@@ -29,7 +29,7 @@ const DataInput: FC = () => {
           <FileSpreadsheet size={50} />
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Label htmlFor='MPPFile'>.csv file</Label>
+          <Label htmlFor='MPPFile'>Input file berformat .csv</Label>
           <Input
             {...register('file')}
             type='file'

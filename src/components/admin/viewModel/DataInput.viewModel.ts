@@ -46,7 +46,6 @@ const DataInputViewModel = () => {
     register,
     handleSubmit,
     onSubmit,
-    // MPPData,
   };
 };
 
