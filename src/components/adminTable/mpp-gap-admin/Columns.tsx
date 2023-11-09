@@ -20,14 +20,6 @@ type MPPGapType = z.infer<typeof MPPGapTypeSchema>;
 
 export const Columns: ColumnDef<MPPGapType>[] = [
   {
-    accessorKey: 'No',
-    header: 'No',
-    cell: ({ row }) => {
-      const index = row.index + 1;
-      return <div>{index}</div>;
-    },
-  },
-  {
     accessorKey: 'Org_Group_Name',
     header: 'Org Group Name',
   },

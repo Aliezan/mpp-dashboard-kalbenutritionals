@@ -3,8 +3,8 @@ import { Status } from '@prisma/client';
 import { toast } from 'sonner';
 
 const MutationsHandler = () => {
-  const { tableRouter, useContext } = trpc;
-  const utils = useContext();
+  const { tableRouter } = trpc;
+  const utils = trpc.useUtils();
 
   const approveMPP = tableRouter.approveMPP.useMutation({
     onMutate: async (newData) => {
@@ -18,7 +18,7 @@ const MutationsHandler = () => {
       // Optimistically update to the new value
       const newDataIds = new Set(newData.ids);
       const updatedData = (previousData ?? []).map((row) => {
-        if (newDataIds.has(row.Employee_ID)) {
+        if (newDataIds.has(row.Employee_ID as string)) {
           return {
             ...row,
             isApproved: 'APPROVED' as Status,
@@ -56,7 +56,7 @@ const MutationsHandler = () => {
       // Optimistically update to the new value
       const newDataIds = new Set(newData.ids);
       const updatedData = (previousData ?? []).map((row) => {
-        if (newDataIds.has(row.Employee_ID)) {
+        if (newDataIds.has(row.Employee_ID as string)) {
           return {
             ...row,
             isApproved: 'REJECTED' as Status,

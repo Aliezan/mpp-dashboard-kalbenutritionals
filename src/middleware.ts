@@ -20,4 +20,4 @@ export default withAuth(
   },
 );
 
-export const config = { matcher: ['/', '/manage-mpp'] };
+export const config = { matcher: ['/', '/manage-mpp', '/manage-users'] };

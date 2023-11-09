@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -60,19 +61,21 @@ export const DataTable = <TData, TValue>({
   return (
     <div>
       <div>
-        <h1 className='font-bold'>MPP Actual Data</h1>
+        <h1 className='font-bold'>Users List</h1>
       </div>
-      <div className='flex items-center py-4 gap-4'>
+      <div className='flex justify-between items-center py-4 gap-4'>
         <Input
-          placeholder='Cari Nama Employee'
-          value={
-            (table.getColumn('Employee_Name')?.getFilterValue() as string) ?? ''
-          }
+          placeholder='Cari Nama User'
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('Employee_Name')?.setFilterValue(event.target.value)
+            table.getColumn('name')?.setFilterValue(event.target.value)
           }
           className='w-[300px]'
         />
+
+        <Button asChild>
+          <Link href='/manage-users?userModal=y&formMode=add'>Add User</Link>
+        </Button>
       </div>
       <div className='rounded-md border'>
         <Table>
