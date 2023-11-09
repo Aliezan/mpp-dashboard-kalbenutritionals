@@ -18,7 +18,8 @@ import UserModalViewModel from './viewModel/UserModal.viewModel';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const UserModal: FC = () => {
-  const { form, onSubmit, errors, formMode } = UserModalViewModel();
+  const { form, onSubmit, errors, formMode, MPPOrganisations } =
+    UserModalViewModel();
 
   return (
     <Modal
@@ -101,7 +102,7 @@ const UserModal: FC = () => {
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                       className='flex flex-col space-y-1'
                     >
                       <FormItem className='flex items-center space-x-3 space-y-0'>
@@ -137,21 +138,18 @@ const UserModal: FC = () => {
                 <FormItem>
                   <FormLabel>Organization Group Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder='Isi Organization Group Name'
-                      className={
-                        errors.OrgGroupName
-                          ? 'border-red-700 mt-2 w-[300px]'
-                          : 'mt-2 w-[300px]'
-                      }
-                      {...field}
-                    />
+                    <select
+                      className='w-[180px] border border-black block'
+                      onChange={field.onChange}
+                      value={field.value}
+                    >
+                      {MPPOrganisations?.map((item) => (
+                        <option value={item.Org_Group_Name ?? ''} key={item.id}>
+                          {item.Org_Group_Name}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
-                  {errors.OrgGroupName && (
-                    <FormDescription className='text-red-700 text-sm mt-1'>
-                      {errors.OrgGroupName.message}
-                    </FormDescription>
-                  )}
                 </FormItem>
               )}
             />
@@ -182,9 +180,7 @@ const UserModal: FC = () => {
               )}
             />
             <Button type='submit' className='mt-4'>
-              {
-                formMode === 'edit' ? 'Edit User' : 'Tambahkan User'
-              }
+              {formMode === 'edit' ? 'Edit User' : 'Tambahkan User'}
             </Button>
           </form>
         </Form>

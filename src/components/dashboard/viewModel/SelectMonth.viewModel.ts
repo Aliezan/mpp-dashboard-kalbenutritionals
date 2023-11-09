@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import useStore from '@/store/store';
 
 const SelectMonthViewModel = () => {
-const { setSelectedMonth } = useStore();
+  const { setSelectedMonth, selectedMonth } = useStore();
 
   const Schema = z.object({
     month: z.string(),
@@ -13,6 +13,9 @@ const { setSelectedMonth } = useStore();
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(Schema),
+    defaultValues: {
+      month: selectedMonth,
+    },
   });
 
   const onSubmit: SubmitHandler<SchemaType> = (data) => {
@@ -23,6 +26,7 @@ const { setSelectedMonth } = useStore();
   return {
     form,
     onSubmit,
+    selectedMonth,
   };
 };
 

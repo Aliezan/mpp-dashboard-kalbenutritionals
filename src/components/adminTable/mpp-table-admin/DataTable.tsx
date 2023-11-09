@@ -73,14 +73,6 @@ export const DataTable = <TData, TValue>({
           }
           className='w-[300px]'
         />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <>
-            <div className='flex-1 text-sm text-muted-foreground'>
-              {table.getFilteredSelectedRowModel().rows.length} of{' '}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-          </>
-        )}
       </div>
       <div className='rounded-md border'>
         <Table>

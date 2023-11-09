@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import MutationsHandler from '@/components/userList/Handler/mutations';
 import { useEffect } from 'react';
 import { Role } from '@prisma/client';
+import { hash } from 'bcrypt-ts';
+import { trpc } from '@/app/_trpc/client';
 
 const UserModalViewModel = () => {
   const userSchema = z.object({
@@ -23,9 +25,9 @@ const UserModalViewModel = () => {
     defaultValues: {
       name: '',
       email: '',
-      password: '',
       role: 'USER',
       OrgGroupName: '',
+      password: '',
     },
   });
 
@@ -42,8 +44,9 @@ const UserModalViewModel = () => {
 
   const userID = searchParams.get('id') || '';
 
-  const onSubmit: SubmitHandler<UserSchemaType> = (data) => {
+  const onSubmit: SubmitHandler<UserSchemaType> = async (data) => {
     const { name, email, role, OrgGroupName, password } = data;
+    const hashedPassword = await hash(password, 12);
 
     if (formMode === 'add') {
       addUser.mutate(
@@ -52,7 +55,7 @@ const UserModalViewModel = () => {
           email,
           role,
           OrgGroupName,
-          password,
+          password: hashedPassword,
         },
         {
           onSuccess: () => {
@@ -103,14 +106,19 @@ const UserModalViewModel = () => {
       form.setValue('OrgGroupName', OrgGroupName, {
         shouldValidate: true,
       });
+    } else {
+      form.reset();
     }
   }, [formMode, searchParams, form]);
+
+  const { data: MPPOrganisations } = trpc.adminRouter.getOrgMPP.useQuery();
 
   return {
     form,
     onSubmit,
     errors,
     formMode,
+    MPPOrganisations,
   };
 };
 

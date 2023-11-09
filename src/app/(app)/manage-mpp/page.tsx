@@ -5,12 +5,14 @@ import { authOptions } from '@/server/auth';
 import React, { FC } from 'react';
 import ManageMPPAdmin from '@/components/admin/ManageMPPAdmin';
 import ManageMPPUser from '@/components/user/ManageMPPUser';
+import MPPModal from '@/components/admin/MPPModal';
 
 const ManageMPP: FC = async () => {
   const session = await getServerSession(authOptions);
 
   return (
     <section className='mt-[40px]'>
+      <MPPModal />
       <div className='w-full'>
         <div className='container px-20 mx-auto'>
           <>

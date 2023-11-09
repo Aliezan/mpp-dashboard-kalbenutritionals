@@ -1,7 +1,7 @@
 import { NextAuthOptions, SessionStrategy } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/db';
-import { compare } from 'bcrypt';
+import { compare } from 'bcrypt-ts';
 import { User } from '@prisma/client';
 import { Role } from '../../nextauth';
 
