@@ -18,7 +18,8 @@ import MPPModalViewModel from './viewModel/MPPModal.viewModel';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const MPPModal: FC = () => {
-  const { form, errors, MPPOrganisations, onSubmit } = MPPModalViewModel();
+  const { form, errors, MPPOrganisations, onSubmit, dirtyFields, isFormDirty } =
+    MPPModalViewModel();
 
   return (
     <Modal title='Edit MPP' closeURL='/manage-mpp' triggerURL='MPPModal'>
@@ -224,7 +225,11 @@ const MPPModal: FC = () => {
                 </FormItem>
               )}
             />
-            <Button type='submit' className='mt-4'>
+            <Button
+              type='submit'
+              className='mt-4'
+              disabled={!isFormDirty(dirtyFields)}
+            >
               Submit
             </Button>
           </form>

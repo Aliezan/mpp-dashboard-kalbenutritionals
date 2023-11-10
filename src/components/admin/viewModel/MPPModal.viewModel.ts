@@ -37,8 +37,22 @@ const MPPModalViewModel = () => {
   });
 
   const {
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = form;
+
+  type DirtyFieldsType = {
+    [key: string]: any;
+  };
+
+  const isFormDirty = (dirtyFieldsParam: DirtyFieldsType) => {
+    const fieldsToCheck = [
+      'OrgGroupName',
+      'JobTitleName',
+      'JobLevelCode',
+      'Category',
+    ];
+    return fieldsToCheck.some((field) => field in dirtyFieldsParam);
+  };
 
   const { data: MPPOrganisations } = trpc.adminRouter.getOrgMPP.useQuery();
 
@@ -132,6 +146,17 @@ const MPPModalViewModel = () => {
       form.setValue('Status', searchParamsValue.Status, {
         shouldValidate: true,
       });
+    } else {
+      form.reset({
+        EmployeeID: '',
+        EmployeeName: '',
+        JoinDate: '',
+        JobTitleName: '',
+        OrgGroupName: '',
+        JobLevelCode: '',
+        Category: '',
+        Status: '',
+      });
     }
   }, [
     MPPModal,
@@ -153,6 +178,8 @@ const MPPModalViewModel = () => {
     errors,
     MPPOrganisations,
     onSubmit,
+    dirtyFields,
+    isFormDirty,
   };
 };
 

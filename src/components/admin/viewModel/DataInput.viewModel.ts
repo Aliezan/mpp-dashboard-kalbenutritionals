@@ -1,4 +1,4 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { trpc } from '@/app/_trpc/client';
@@ -21,7 +21,9 @@ const MPPInputSchema = z.object({
 type MPPInputSchemaType = z.infer<typeof MPPInputSchema>;
 
 const DataInputViewModel = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control } = useForm();
+
+  const file = useWatch({ control, name: 'file' });
 
   const { adminRouter } = trpc;
   const mutation = adminRouter.insertMPP.useMutation();
@@ -46,6 +48,7 @@ const DataInputViewModel = () => {
     register,
     handleSubmit,
     onSubmit,
+    file,
   };
 };
 
