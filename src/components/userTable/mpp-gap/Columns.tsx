@@ -11,9 +11,9 @@ const MPPGapTypeSchema = z.object({
   Job_Level_Code: z.string().nullable(),
   Category: z.string().nullable(),
   Status: z.string().nullable(),
-  MPP: z.number().nullable(),
-  Actual: z.number().nullable(),
-  Gap: z.number().nullable(),
+  MPP: z.string().nullable(),
+  Actual: z.string().nullable(),
+  Gap: z.string().nullable(),
 });
 
 type MPPGapType = z.infer<typeof MPPGapTypeSchema>;

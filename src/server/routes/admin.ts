@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import { prisma } from '@/db';
+import { Status } from '@prisma/client';
 import { z } from 'zod';
+import MPPRelations from '@/utils/MPPRelations';
 import { privateProcedure, router } from '../trpc';
 
 const adminRouter = router({
@@ -44,14 +46,18 @@ const adminRouter = router({
         }),
       ),
     )
+    // *TODO: ASK SHOULD ALL MPP ARE APPROVED OR PENDING BY DEFAULT?
     .mutation(async ({ input }) => {
+      const modifiedInput = input.map((item) => ({
+        ...item,
+        isApproved: item.Gap === '0' ? Status.APPROVED : Status.PENDING,
+      }));
       const inputMPP = await prisma.mPP.createMany({
-        data: input,
+        data: modifiedInput,
       });
 
       return inputMPP.count;
     }),
-
   getMonthlyMPPGap: privateProcedure
     .input(
       z.object({
@@ -142,6 +148,7 @@ const adminRouter = router({
           Actual: true,
           Gap: true,
           isApproved: true,
+          createdAt: true,
         },
       });
       return MonthlyMPP;
@@ -165,7 +172,6 @@ const adminRouter = router({
     });
     return users;
   }),
-
   addUser: privateProcedure
     .input(
       z.object({
@@ -186,6 +192,8 @@ const adminRouter = router({
           Org_Group_Name: input.OrgGroupName,
         },
       });
+
+      await MPPRelations(input.OrgGroupName, user.id);
       return user;
     }),
 
@@ -228,6 +236,7 @@ const adminRouter = router({
           Org_Group_Name: input.OrgGroupName,
         },
       });
+      await MPPRelations(input.OrgGroupName, user.id);
       return user;
     }),
   getOrgMPP: privateProcedure.query(async () => {
@@ -256,36 +265,75 @@ const adminRouter = router({
         id: z.string(),
         Employee_ID: z.string(),
         Employee_Name: z.string(),
-        Join_Date: z.string().nullable(),
+        Join_Date: z.string(),
         Job_Title_Name: z.string(),
-        Org_Group_Name: z.string(),
         Job_Level_Code: z.string(),
         Category: z.string(),
         Status: z.string(),
       }),
     )
     .mutation(async ({ input }) => {
-      const deleteMPP = await prisma.mPP.delete({
+      const updateMPP = await prisma.mPP.update({
         where: {
           id: input.id,
         },
-      });
-
-      const addMPP = await prisma.mPP.create({
         data: {
           Employee_ID: input.Employee_ID,
           Employee_Name: input.Employee_Name,
           Join_Date: input.Join_Date,
           Job_Title_Name: input.Job_Title_Name,
-          Org_Group_Name: input.Org_Group_Name,
           Job_Level_Code: input.Job_Level_Code,
           Category: input.Category,
           Status: input.Status,
         },
       });
+      return updateMPP;
+    }),
+  editMPPOrg: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        Employee_ID: z.string(),
+        Employee_Name: z.string(),
+        Org_Group_Name: z.string(),
+        Join_Date: z.string(),
+        Job_Title_Name: z.string(),
+        Job_Level_Code: z.string(),
+        Category: z.string(),
+        Status: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const deleteExistingMPP = await prisma.mPP.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      const moveToNewOrg = await prisma.mPP.create({
+        data: {
+          Employee_ID: input.Employee_ID,
+          Employee_Name: input.Employee_Name,
+          Join_Date: input.Join_Date,
+          Org_Group_Name: input.Org_Group_Name,
+          Job_Title_Name: input.Job_Title_Name,
+          Job_Level_Code: input.Job_Level_Code,
+          Category: input.Category,
+          Status: input.Status,
+        },
+      });
+
+      const user = await prisma.user.findFirst({
+        where: { Org_Group_Name: input.Org_Group_Name },
+      });
+
+      if (user) {
+        await MPPRelations(input.Org_Group_Name, user.id);
+      }
+
       return {
-        deleteMPP,
-        addMPP,
+        deleteExistingMPP,
+        moveToNewOrg,
       };
     }),
   addMPPGap: privateProcedure
@@ -311,7 +359,107 @@ const adminRouter = router({
           Gap: '-1',
         },
       });
+
+      const user = await prisma.user.findFirst({
+        where: { Org_Group_Name: input.Org_Group_Name },
+      });
+
+      if (user) {
+        await MPPRelations(input.Org_Group_Name, user.id);
+      }
       return addMPPGap;
+    }),
+  assignMPPGap: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        Employee_ID: z.string(),
+        Employee_Name: z.string(),
+        Join_Date: z.string(),
+        Status: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const assignMPPGap = await prisma.mPP.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          Employee_ID: input.Employee_ID,
+          Employee_Name: input.Employee_Name,
+          Join_Date: input.Join_Date,
+          Status: input.Status,
+          Gap: '0',
+          Actual: '1',
+        },
+      });
+      const mpp = await prisma.mPP.findUnique({
+        where: { id: input.id },
+      });
+
+      if (mpp) {
+        const user = await prisma.user.findFirst({
+          where: { Org_Group_Name: mpp.Org_Group_Name },
+        });
+
+        if (user) {
+          await MPPRelations(mpp.Org_Group_Name ?? '', user.id);
+        }
+      }
+      return assignMPPGap;
+    }),
+  deleteMPPRow: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const deleteMPPRow = await prisma.mPP.delete({
+        where: {
+          id: input.id,
+        },
+      });
+      return deleteMPPRow;
+    }),
+  addMPPRow: privateProcedure
+    .input(
+      z.object({
+        Employee_ID: z.string(),
+        Employee_Name: z.string(),
+        Join_Date: z.string(),
+        Org_Group_Name: z.string(),
+        Job_Title_Name: z.string(),
+        Job_Level_Code: z.string(),
+        Category: z.string(),
+        Status: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const createMPPRow = await prisma.mPP.create({
+        data: {
+          Employee_ID: input.Employee_ID,
+          Employee_Name: input.Employee_Name,
+          Join_Date: input.Join_Date,
+          Org_Group_Name: input.Org_Group_Name,
+          Job_Title_Name: input.Job_Title_Name,
+          Job_Level_Code: input.Job_Level_Code,
+          Category: input.Category,
+          Status: input.Status,
+          MPP: '1',
+          Actual: '0',
+          Gap: '1',
+        },
+      });
+
+      const user = await prisma.user.findFirst({
+        where: { Org_Group_Name: input.Org_Group_Name },
+      });
+
+      if (user) {
+        await MPPRelations(input.Org_Group_Name, user.id);
+      }
+      return createMPPRow;
     }),
 });
 

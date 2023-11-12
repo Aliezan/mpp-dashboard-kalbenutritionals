@@ -8,16 +8,18 @@ import { useEffect } from 'react';
 import { trpc } from '@/app/_trpc/client';
 import MutationsHandler from '@/components/adminTable/Handler/mutations';
 
+// *TODO ADD INPUT VALIDATION
+
 const MPPModalViewModel = () => {
   const MPPEmployeeSchema = z.object({
-    EmployeeID: z.string(),
-    EmployeeName: z.string(),
-    JoinDate: z.string(),
-    JobTitleName: z.string(),
-    OrgGroupName: z.string(),
-    JobLevelCode: z.string(),
-    Category: z.string(),
-    Status: z.string(),
+    EmployeeID: z.string().min(3, 'Masukkan Employee ID dengan benar'),
+    EmployeeName: z.string().min(3, 'Masukkan nama dengan benar'),
+    JoinDate: z.string().min(1, 'Masukkan tanggal dengan benar'),
+    JobTitleName: z.string().min(1),
+    OrgGroupName: z.string().min(1),
+    JobLevelCode: z.string().min(1),
+    Category: z.string().min(1),
+    Status: z.string().min(1),
   });
 
   type MPPEmployeeSchemaType = z.infer<typeof MPPEmployeeSchema>;
@@ -44,20 +46,28 @@ const MPPModalViewModel = () => {
     [key: string]: any;
   };
 
-  const isFormDirty = (dirtyFieldsParam: DirtyFieldsType) => {
+  const editFormDirty = (dirtyFieldsParam: DirtyFieldsType) => {
     const fieldsToCheck = [
-      'OrgGroupName',
+      'EmployeeID',
+      'EmployeeName',
+      'JoinDate',
       'JobTitleName',
       'JobLevelCode',
       'Category',
+      'Status',
     ];
+    return fieldsToCheck.some((field) => field in dirtyFieldsParam);
+  };
+
+  const moveFormDirty = (dirtyFieldsParam: DirtyFieldsType) => {
+    const fieldsToCheck = ['OrgGroupName'];
     return fieldsToCheck.some((field) => field in dirtyFieldsParam);
   };
 
   const { data: MPPOrganisations } = trpc.adminRouter.getOrgMPP.useQuery();
 
   const searchParams = useSearchParams();
-  const MPPModal = searchParams.get('MPPModal');
+  const formMode = searchParams.get('formMode');
 
   const searchParamsValue = {
     Id: decodeURIComponent(searchParams.get('id') ?? ''),
@@ -72,7 +82,7 @@ const MPPModalViewModel = () => {
   };
 
   const router = useRouter();
-  const { editMPP, addMPPGap } = MutationsHandler();
+  const { editMPP, editMPPOrg, addMPPGap, assignMPPGap } = MutationsHandler();
 
   const onSubmit: SubmitHandler<MPPEmployeeSchemaType> = (data) => {
     const {
@@ -86,54 +96,105 @@ const MPPModalViewModel = () => {
       Status,
     } = data;
 
-    editMPP.mutate(
-      {
-        id: searchParamsValue.Id,
-        Employee_ID: EmployeeID,
-        Employee_Name: EmployeeName,
-        Join_Date: JoinDate,
-        Job_Title_Name: JobTitleName,
-        Org_Group_Name: OrgGroupName,
-        Job_Level_Code: JobLevelCode,
-        Category,
-        Status,
-      },
-      {
-        onSuccess: () => {
-          router.push('/manage-mpp');
-          toast.success('MPP berhasil diubah');
+    if (formMode === 'move') {
+      editMPPOrg.mutate(
+        {
+          id: searchParamsValue.Id,
+          Employee_ID: EmployeeID,
+          Employee_Name: EmployeeName,
+          Join_Date: JoinDate,
+          Org_Group_Name: OrgGroupName,
+          Job_Title_Name: JobTitleName,
+          Job_Level_Code: JobLevelCode,
+          Category,
+          Status,
         },
-        onError: () => {
-          router.push('/manage-mpp');
-          toast.error('Gagal mengubah MPP. Coba lagi');
+        {
+          onSuccess: () => {
+            addMPPGap.mutate({
+              Org_Group_Name: searchParamsValue.OrgGroupName,
+              Job_Title_Name: searchParamsValue.JobTitleName,
+              Job_Level_Code: searchParamsValue.JobLevelCode,
+              Category: searchParamsValue.Category,
+              Status: searchParamsValue.Status,
+            });
+            router.push('/manage-mpp');
+            toast.success('Employee berhasil dipindahkan');
+          },
+          onError: () => {
+            router.push('/manage-mpp');
+            toast.error('Gagal memindahkan employee. Coba lagi');
+          },
         },
-      },
-    );
+      );
+    }
 
-    addMPPGap.mutate({
-      Org_Group_Name: searchParamsValue.OrgGroupName,
-      Job_Title_Name: searchParamsValue.JobTitleName,
-      Job_Level_Code: searchParamsValue.JobLevelCode,
-      Category: searchParamsValue.Category,
-      Status: searchParamsValue.Status,
-    });
+    if (formMode === 'assign') {
+      assignMPPGap.mutate(
+        {
+          id: searchParamsValue.Id,
+          Employee_ID: EmployeeID,
+          Employee_Name: EmployeeName,
+          Join_Date: JoinDate,
+          Status,
+        },
+        {
+          onSuccess: () => {
+            router.push('/manage-mpp');
+            toast.success('MPP Gap berhasil diisi');
+          },
+          onError: () => {
+            router.push('/manage-mpp');
+            toast.error('Gagal mengubah mengisi MPP Gap. Coba lagi');
+          },
+        },
+      );
+    }
+
+    if (formMode === 'edit') {
+      editMPP.mutate(
+        {
+          id: searchParamsValue.Id,
+          Employee_ID: EmployeeID,
+          Employee_Name: EmployeeName,
+          Join_Date: JoinDate,
+          Job_Title_Name: JobTitleName,
+          Job_Level_Code: JobLevelCode,
+          Category,
+          Status,
+        },
+        {
+          onSuccess: () => {
+            router.push('/manage-mpp');
+            toast.success('MPP berhasil diubah');
+          },
+          onError: () => {
+            router.push('/manage-mpp');
+            toast.error('Gagal mengubah MPP. Coba lagi');
+          },
+        },
+      );
+    }
   };
 
+  let formattedDate = '';
+  if (searchParamsValue.JoinDate) {
+    const [day, month, year] = searchParamsValue.JoinDate.split('-');
+    if (day && month && year) {
+      formattedDate = `20${year}-${month.padStart(2, '0')}-${day.padStart(
+        2,
+        '0',
+      )}`;
+    }
+  }
   useEffect(() => {
-    if (MPPModal === 'y') {
-      form.setValue('EmployeeID', searchParamsValue.EmployeeID, {
-        shouldValidate: true,
-      });
-      form.setValue('EmployeeName', searchParamsValue.EmployeeName, {
-        shouldValidate: true,
-      });
-      form.setValue('JoinDate', searchParamsValue.JoinDate, {
-        shouldValidate: true,
-      });
+    if (formMode === 'edit') {
+      form.setValue('EmployeeID', searchParamsValue.EmployeeID);
+      form.setValue('EmployeeName', searchParamsValue.EmployeeName);
+      form.setValue('JoinDate', formattedDate);
       form.setValue('JobTitleName', searchParamsValue.JobTitleName, {
         shouldValidate: true,
       });
-
       form.setValue('OrgGroupName', searchParamsValue.OrgGroupName, {
         shouldValidate: true,
       });
@@ -146,26 +207,33 @@ const MPPModalViewModel = () => {
       form.setValue('Status', searchParamsValue.Status, {
         shouldValidate: true,
       });
-    } else {
-      form.reset({
-        EmployeeID: '',
-        EmployeeName: '',
-        JoinDate: '',
-        JobTitleName: '',
-        OrgGroupName: '',
-        JobLevelCode: '',
-        Category: '',
-        Status: '',
+    } else if (formMode === 'assign') {
+      form.setValue('JobTitleName', searchParamsValue.JobTitleName);
+      form.setValue('OrgGroupName', searchParamsValue.OrgGroupName);
+      form.setValue('JobLevelCode', searchParamsValue.JobLevelCode);
+      form.setValue('Category', searchParamsValue.Category);
+    } else if (formMode === 'move') {
+      form.setValue('EmployeeID', searchParamsValue.EmployeeID);
+      form.setValue('EmployeeName', searchParamsValue.EmployeeName);
+      form.setValue('JoinDate', formattedDate);
+      form.setValue('JobTitleName', searchParamsValue.JobTitleName, {});
+      form.setValue('OrgGroupName', searchParamsValue.OrgGroupName, {
+        shouldValidate: true,
       });
+      form.setValue('JobLevelCode', searchParamsValue.JobLevelCode, {});
+      form.setValue('Category', searchParamsValue.Category, {});
+      form.setValue('Status', searchParamsValue.Status, {});
+    } else {
+      form.reset();
     }
   }, [
-    MPPModal,
+    formMode,
     searchParams,
     form,
     searchParamsValue.Id,
     searchParamsValue.EmployeeID,
     searchParamsValue.EmployeeName,
-    searchParamsValue.JoinDate,
+    formattedDate,
     searchParamsValue.JobTitleName,
     searchParamsValue.OrgGroupName,
     searchParamsValue.JobLevelCode,
@@ -179,7 +247,9 @@ const MPPModalViewModel = () => {
     MPPOrganisations,
     onSubmit,
     dirtyFields,
-    isFormDirty,
+    editFormDirty,
+    moveFormDirty,
+    formMode,
   };
 };
 

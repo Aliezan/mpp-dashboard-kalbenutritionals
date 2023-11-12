@@ -64,14 +64,14 @@ export const DataTable = <TData, TValue>({
       </div>
       <div className='flex items-center py-4'>
         <Input
-          placeholder='Cari Job Title'
+          placeholder='Cari Org Group Name'
           value={
-            (table.getColumn('Job_Title_Name')?.getFilterValue() as string) ??
+            (table.getColumn('Org_Group_Name')?.getFilterValue() as string) ??
             ''
           }
           onChange={(event) =>
             table
-              .getColumn('Job_Title_Name')
+              .getColumn('Org_Group_Name')
               ?.setFilterValue(event.target.value)
           }
           className='max-w-sm'

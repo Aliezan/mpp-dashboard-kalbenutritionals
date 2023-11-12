@@ -11,7 +11,6 @@ const MPPTableAdmin: FC = () => {
   return (
     <div className='container mx-auto ml-[30px] py-10'>
       <DataTable
-        // @ts-expect-error
         columns={Columns}
         data={MPPData ?? []}
         isLoading={isLoadingMPPQuery}
