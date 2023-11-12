@@ -3,7 +3,13 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, PenLineIcon, MoreHorizontal } from 'lucide-react';
+import {
+  ArrowUpDown,
+  PenLine,
+  MoreHorizontal,
+  ArrowLeftRight,
+  TrashIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
 import { Badge } from '@/components/ui/badge';
@@ -17,13 +23,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 
-/* TODO:
- APPLY MORE TIGHT SCHEMA VALIDATION ON TABLE DATA IF POSSIBLE
- I.E, ENUMS
- */
-
 const MPPTableTypeSchema = z.object({
-  id: z.string(),
+  id: z.string().nullable(),
   Employee_ID: z.string().nullable(),
   Employee_Name: z.string().nullable(),
   Join_Date: z.string().nullable(),
@@ -35,6 +36,8 @@ const MPPTableTypeSchema = z.object({
   MPP: z.string().nullable(),
   Actual: z.string().nullable(),
   Gap: z.string().nullable(),
+  isApproved: z.string().nullable(),
+  createdAt: z.string().nullable(),
 });
 
 type MPPTableType = z.infer<typeof MPPTableTypeSchema>;
@@ -60,17 +63,16 @@ export const Columns: ColumnDef<MPPTableType>[] = [
     accessorKey: 'Join_Date',
     header: 'Join Date',
     cell: ({ row }) => {
-      const date = new Date(row.getValue('Join_Date'));
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-      };
-      const formatted = date.toLocaleDateString('id-ID', options);
+      const dateString = row.getValue('Join_Date') as string;
+      const [day, month, year] = dateString.split('-').map(Number);
+      const date = new Date(year + 2000, month - 1, day);
+      const formattedDay = String(date.getDate()).padStart(2, '0');
+      const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+      const formattedYear = date.getFullYear();
+      const formatted = `${formattedDay}/${formattedMonth}/${formattedYear}`;
       return <div>{formatted}</div>;
     },
   },
-
   {
     accessorKey: 'Job_Title_Name',
     header: 'Job Title Name',
@@ -112,6 +114,28 @@ export const Columns: ColumnDef<MPPTableType>[] = [
     },
   },
   {
+    accessorKey: 'createdAt',
+    header: ({ column }) => (
+      <Button
+        variant='ghost'
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Last Modified
+        <ArrowUpDown className='ml-2 h-4 w-4' />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue('createdAt'));
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+      };
+      const formatted = date.toLocaleDateString('id-ID', options);
+      return <div>{formatted}</div>;
+    },
+  },
+  {
     id: 'actions',
     header: 'Actions',
     enableHiding: false,
@@ -130,13 +154,13 @@ export const Columns: ColumnDef<MPPTableType>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <div className='flex'>
-                <PenLineIcon size={20} className='mt-2' />
+                <PenLine size={20} className='mt-2' />
                 <Button
                   variant='ghost'
                   onClick={() => {
                     const rowData = row.original;
                     router.push(
-                      `/manage-mpp?MPPModal=y&id=${encodeURIComponent(
+                      `/manage-mpp?MPPModal=y&formMode=edit&id=${encodeURIComponent(
                         rowData.id ?? '',
                       )}&EmployeeId=${encodeURIComponent(
                         rowData.Employee_ID ?? '',
@@ -157,6 +181,52 @@ export const Columns: ColumnDef<MPPTableType>[] = [
                   }}
                 >
                   Edit MPP
+                </Button>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div className='flex'>
+                <ArrowLeftRight size={20} className='mt-2' />
+                <Button
+                  variant='ghost'
+                  onClick={() => {
+                    const rowData = row.original;
+                    router.push(
+                      `/manage-mpp?MPPModal=y&formMode=move&id=${encodeURIComponent(
+                        rowData.id ?? '',
+                      )}&EmployeeId=${encodeURIComponent(
+                        rowData.Employee_ID ?? '',
+                      )}&name=${encodeURIComponent(
+                        rowData.Employee_Name ?? '',
+                      )}&date=${encodeURIComponent(
+                        rowData.Join_Date ?? '',
+                      )}&title=${encodeURIComponent(
+                        rowData.Job_Title_Name ?? '',
+                      )}&OrgGroupName=${encodeURIComponent(
+                        rowData.Org_Group_Name ?? '',
+                      )}&JobLevelCode=${encodeURIComponent(
+                        rowData.Job_Level_Code ?? '',
+                      )}&Category=${encodeURIComponent(
+                        rowData.Category ?? '',
+                      )}&Status=${encodeURIComponent(rowData.Status ?? '')}`,
+                    );
+                  }}
+                >
+                  Move to Another Org
+                </Button>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div className='flex'>
+                <TrashIcon size={20} className='mt-2' />
+                <Button
+                  variant='ghost'
+                  onClick={() => {
+                    const rowData = row.original;
+                    router.push(`/manage-mpp?MPPRowDelete=y&id=${rowData.id}`);
+                  }}
+                >
+                  Delete MPP Row
                 </Button>
               </div>
             </DropdownMenuItem>

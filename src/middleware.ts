@@ -1,23 +1,11 @@
-import { withAuth, NextRequestWithAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
+import { withAuth } from 'next-auth/middleware';
 
-export default withAuth(
-  (request: NextRequestWithAuth) => {
-    if (
-      request.nextUrl.pathname.startsWith('/admin') &&
-      request.nextauth.token?.role !== 'ADMIN'
-    ) {
-      const redirectUrl = new URL('/', request.url);
-      return NextResponse.redirect(redirectUrl.toString());
-    }
-    return NextResponse.next();
+export default withAuth({
+  callbacks: {
+    authorized: ({ token }) => !!token,
   },
+});
 
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
-  },
-);
-
-export const config = { matcher: ['/', '/manage-mpp', '/manage-users'] };
+export const config = {
+  matcher: ['/', '/manage-mpp', '/manage-users', '/mpp-summary'],
+};

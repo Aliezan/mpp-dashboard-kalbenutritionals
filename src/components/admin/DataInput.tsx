@@ -15,7 +15,7 @@ import DataInputViewModel from './viewModel/DataInput.viewModel';
 import { Button } from '../ui/button';
 
 const DataInput: FC = () => {
-  const { register, handleSubmit, onSubmit } = DataInputViewModel();
+  const { register, handleSubmit, onSubmit, file } = DataInputViewModel();
   return (
     <Card className='w-[600px]'>
       <CardHeader>
@@ -38,7 +38,7 @@ const DataInput: FC = () => {
             accept='.csv'
           />
           <div className='flex items-center justify-center'>
-            <Button type='submit' className='mt-4'>
+            <Button type='submit' className='mt-4' disabled={!file}>
               Submit
             </Button>
           </div>

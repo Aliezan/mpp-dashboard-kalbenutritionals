@@ -28,7 +28,6 @@ model User {
   role           Role         @default(USER)
   Org_Group_Name String?
   MPP            MPP[]
-  DeficitMPP     DeficitMPP[]
 }
 
 model MPP {
@@ -48,18 +47,4 @@ model MPP {
   Actual         String?  @default("1")
   Gap            String?  @default("0")
   createdAt      DateTime @default(now())
-}
-
-model DeficitMPP {
-  user           User   @relation(fields: [userId], references: [id])
-  userId         String
-  id             String @id @default(uuid())
-  Org_Group_Name String
-  Job_Title_Name String
-  Job_Level_Code String
-  Category       String
-  Status         String
-  MPP            Int    @default(1)
-  Actual         Int    @default(0)
-  Gap            Int    @default(-1)
 }

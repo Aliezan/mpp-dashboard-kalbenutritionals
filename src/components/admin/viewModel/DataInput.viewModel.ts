@@ -1,7 +1,8 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import Papa from 'papaparse';
 import { z } from 'zod';
 import { trpc } from '@/app/_trpc/client';
+import { toast } from 'sonner';
 
 const MPPInputSchema = z.object({
   No: z.string().nullable(),
@@ -21,7 +22,9 @@ const MPPInputSchema = z.object({
 type MPPInputSchemaType = z.infer<typeof MPPInputSchema>;
 
 const DataInputViewModel = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control, reset } = useForm();
+
+  const file = useWatch({ control, name: 'file' });
 
   const { adminRouter } = trpc;
   const mutation = adminRouter.insertMPP.useMutation();
@@ -37,7 +40,15 @@ const DataInputViewModel = () => {
               (val) => val !== undefined && val !== null && val !== '',
             ),
           );
-        mutation.mutate(newData);
+        mutation.mutate(newData, {
+          onSuccess: () => {
+            toast.success('Data berhasil diupload');
+            reset();
+          },
+          onError: () => {
+            toast.error('Data gagal diupload');
+          },
+        });
       },
     });
   };
@@ -46,6 +57,7 @@ const DataInputViewModel = () => {
     register,
     handleSubmit,
     onSubmit,
+    file,
   };
 };
 

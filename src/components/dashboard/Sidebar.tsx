@@ -1,14 +1,13 @@
-/* eslint-disable max-len */
-
 'use client';
 
 import React, { FC } from 'react';
 import Link from 'next/link';
 import {
-  HomeIcon,
+  Home,
   ChevronLeft,
-  TablePropertiesIcon,
-  UserCogIcon,
+  TableProperties,
+  UserCog,
+  BarChart3,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
@@ -53,7 +52,7 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
           {expand ? (
             <div className='flex items-center gap-2 transition'>
               <div className=' group-hover:text-[#195FAA] text-black'>
-                <HomeIcon className='dark:text-white' />
+                <Home className='dark:text-white' />
               </div>
               <span className='text-[20px] font-semibold leading-7 tracking-tighter group-hover:text-[#195FAA]'>
                 Home
@@ -61,7 +60,7 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
             </div>
           ) : (
             <div className=' group-hover:text-[#195FAA] text-black'>
-              <HomeIcon className='dark:text-white' />
+              <Home className='dark:text-white' />
             </div>
           )}
         </div>
@@ -71,7 +70,7 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
           {expand ? (
             <div className='flex items-center gap-2 transition'>
               <div className=' group-hover:text-[#195FAA] text-black'>
-                <TablePropertiesIcon className='dark:text-white' />
+                <TableProperties className='dark:text-white' />
               </div>
               <span className='text-[20px] font-semibold leading-7 tracking-tighter group-hover:text-[#195FAA]'>
                 Manage MPP
@@ -79,7 +78,7 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
             </div>
           ) : (
             <div className=' group-hover:text-[#195FAA] text-black'>
-              <TablePropertiesIcon className='dark:text-white' />
+              <TableProperties className='dark:text-white' />
             </div>
           )}
         </div>
@@ -90,7 +89,7 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
             {expand ? (
               <div className='flex items-center gap-2 transition'>
                 <div className=' group-hover:text-[#195FAA] text-black'>
-                  <UserCogIcon className='dark:text-white' />
+                  <UserCog className='dark:text-white' />
                 </div>
                 <span className='text-[20px] font-semibold leading-7 tracking-tighter group-hover:text-[#195FAA]'>
                   Manage Users
@@ -98,12 +97,30 @@ const Sidebar: FC<SidebarProps> = ({ expand, handleExpand }) => {
               </div>
             ) : (
               <div className=' group-hover:text-[#195FAA] text-black'>
-                <UserCogIcon className='dark:text-white' />
+                <UserCog className='dark:text-white' />
               </div>
             )}
           </div>
         </Link>
       ) : null}
+      <Link href='/mpp-summary'>
+        <div className='py-1 px-6 flex justify-start items-center w-full h-[52px] rounded-2xl cursor-pointer hover:border-[1px] hover:border-[#195FAA] group transition'>
+          {expand ? (
+            <div className='flex items-center gap-2 transition'>
+              <div className=' group-hover:text-[#195FAA] text-black'>
+                <BarChart3 className='dark:text-white' />
+              </div>
+              <span className='text-[20px] font-semibold leading-7 tracking-tighter group-hover:text-[#195FAA]'>
+                Summary
+              </span>
+            </div>
+          ) : (
+            <div className=' group-hover:text-[#195FAA] text-black'>
+              <BarChart3 className='dark:text-white' />
+            </div>
+          )}
+        </div>
+      </Link>
     </div>
   );
 };

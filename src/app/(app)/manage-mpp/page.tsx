@@ -6,6 +6,7 @@ import React, { FC } from 'react';
 import ManageMPPAdmin from '@/components/admin/ManageMPPAdmin';
 import ManageMPPUser from '@/components/user/ManageMPPUser';
 import MPPModal from '@/components/admin/MPPModal';
+import DeleteMPPModal from '@/components/admin/DeleteMPPModal';
 
 const ManageMPP: FC = async () => {
   const session = await getServerSession(authOptions);
@@ -13,6 +14,7 @@ const ManageMPP: FC = async () => {
   return (
     <section className='mt-[40px]'>
       <MPPModal />
+      <DeleteMPPModal />
       <div className='w-full'>
         <div className='container px-20 mx-auto'>
           <>

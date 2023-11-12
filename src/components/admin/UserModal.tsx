@@ -139,7 +139,7 @@ const UserModal: FC = () => {
                   <FormLabel>Organization Group Name</FormLabel>
                   <FormControl>
                     <select
-                      className='w-[180px] border border-black block'
+                      className='w-[300px] border border-black block'
                       onChange={field.onChange}
                       value={field.value}
                     >

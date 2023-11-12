@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+
 'use client';
 
 import React, { FC } from 'react';
@@ -18,14 +20,45 @@ import MPPModalViewModel from './viewModel/MPPModal.viewModel';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const MPPModal: FC = () => {
-  const { form, errors, MPPOrganisations, onSubmit } = MPPModalViewModel();
+  const {
+    form,
+    errors,
+    MPPOrganisations,
+    onSubmit,
+    dirtyFields,
+    editFormDirty,
+    moveFormDirty,
+    formMode,
+  } = MPPModalViewModel();
+
+  const titleCondition = {
+    edit: 'Edit MPP Data',
+    assign: 'Assign MPP Data',
+    move: 'Move to Another Organisation',
+  };
+
+  const descriptionCondition = {
+    edit: 'Edit Basic Data MPP (Profile Employee)',
+    assign: 'Assign Gap dengan Data MPP Actual',
+    move: 'Pindahkan Employee ke Organisasi Lain',
+  };
 
   return (
-    <Modal title='Edit MPP' closeURL='/manage-mpp' triggerURL='MPPModal'>
+    <Modal
+      title={titleCondition[formMode as keyof typeof titleCondition]}
+      closeURL='/manage-mpp'
+      triggerURL='MPPModal'
+    >
       <CardContent>
         <div className='flex gap-2'>
-          <Info size={20} />
-          <p className='text-slate-400 text-[13px]'>Edit Data MPP</p>
+          <Info size={20} color='orange' />
+          <p className='text-yellow-600 text-[13px]'>
+            {
+              descriptionCondition[
+                formMode as keyof typeof descriptionCondition
+              ]
+            }
+          </p>
         </div>
         <Form {...form}>
           <form
@@ -38,10 +71,17 @@ const MPPModal: FC = () => {
                 name='EmployeeID'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee ID</FormLabel>
+                    <FormLabel
+                      htmlFor='EmployeeID'
+                      className={
+                        formMode === 'move' ? 'text-slate-500' : 'text-black'
+                      }
+                    >
+                      Employee ID
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        disabled
+                        disabled={formMode === 'move'}
                         {...field}
                         className={
                           errors.EmployeeID ? 'border-red-700 mt-2' : 'mt-2'
@@ -61,10 +101,17 @@ const MPPModal: FC = () => {
                 name='EmployeeName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Employee Name</FormLabel>
+                    <FormLabel
+                      htmlFor='EmployeeName'
+                      className={
+                        formMode === 'move' ? 'text-slate-500' : 'text-black'
+                      }
+                    >
+                      Employee Name
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        disabled
+                        disabled={formMode === 'move'}
                         {...field}
                         className={
                           errors.EmployeeName ? 'border-red-700 mt-2' : 'mt-2'
@@ -84,10 +131,10 @@ const MPPModal: FC = () => {
                 name='JoinDate'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Join Date</FormLabel>
+                    <FormLabel htmlFor='JoinDate'>Join Date</FormLabel>
                     <FormControl>
                       <Input
-                        disabled
+                        type='date'
                         className={
                           errors.JoinDate
                             ? 'border-red-700 mt-2 w-[300px]'
@@ -110,12 +157,22 @@ const MPPModal: FC = () => {
               name='OrgGroupName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Organization Group Name</FormLabel>
+                  <FormLabel
+                    htmlFor='OrgGroupName'
+                    className={
+                      formMode === 'edit' || formMode === 'assign'
+                        ? 'text-slate-500'
+                        : 'text-black'
+                    }
+                  >
+                    Organization Group Name
+                  </FormLabel>
                   <FormControl>
                     <select
                       className='w-[300px] border border-black block'
                       onChange={field.onChange}
                       value={field.value}
+                      disabled={formMode === 'edit' || formMode === 'assign'}
                     >
                       {MPPOrganisations?.map((item) => (
                         <option value={item.Org_Group_Name ?? ''} key={item.id}>
@@ -132,9 +189,17 @@ const MPPModal: FC = () => {
               name='JobTitleName'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Job Title Name</FormLabel>
+                  <FormLabel
+                    htmlFor='JobTitleName'
+                    className={
+                      formMode === 'assign' ? 'text-slate-500' : 'text-black'
+                    }
+                  >
+                    Job Title Name
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      disabled={formMode === 'assign'}
                       className={
                         errors.JobTitleName
                           ? 'border-red-700 mt-2 w-[300px]'
@@ -151,9 +216,19 @@ const MPPModal: FC = () => {
               name='JobLevelCode'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Job Level Code</FormLabel>
+                  <FormLabel
+                    htmlFor='JobLevelCode'
+                    className={
+                      formMode === 'move' || formMode === 'assign'
+                        ? 'text-slate-500'
+                        : 'text-black'
+                    }
+                  >
+                    Job Level Code
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      disabled={formMode === 'assign' || formMode === 'move'}
                       placeholder='Isi Organization Group Name'
                       className={
                         errors.JobLevelCode
@@ -176,9 +251,19 @@ const MPPModal: FC = () => {
               name='Category'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel
+                    htmlFor='Category'
+                    className={
+                      formMode === 'move' || formMode === 'assign'
+                        ? 'text-slate-500'
+                        : 'text-black'
+                    }
+                  >
+                    Category
+                  </FormLabel>
                   <FormControl>
                     <Input
+                      disabled={formMode === 'assign' || formMode === 'move'}
                       className={
                         errors.Category
                           ? 'border-red-700 mt-2 w-[300px]'
@@ -200,7 +285,7 @@ const MPPModal: FC = () => {
               name='Status'
               render={({ field }) => (
                 <FormItem className='space-y-3'>
-                  <FormLabel>Employee Status</FormLabel>
+                  <FormLabel htmlFor='Status'>Employee Status</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -219,14 +304,44 @@ const MPPModal: FC = () => {
                         </FormControl>
                         <FormLabel className='font-normal'>Contract</FormLabel>
                       </FormItem>
+                      <FormItem className='flex items-center space-x-3 space-y-0'>
+                        <FormControl>
+                          <RadioGroupItem value='Outsourcing Commercial' />
+                        </FormControl>
+                        <FormLabel className='font-normal'>Outsourcing Commercial</FormLabel>
+                      </FormItem>
+                      <FormItem className='flex items-center space-x-3 space-y-0'>
+                        <FormControl>
+                          <RadioGroupItem value='Outsourcing Non Commercial' />
+                        </FormControl>
+                        <FormLabel className='font-normal'>Outsourcing Non Commercial</FormLabel>
+                      </FormItem>
                     </RadioGroup>
                   </FormControl>
                 </FormItem>
               )}
             />
-            <Button type='submit' className='mt-4'>
-              Submit
-            </Button>
+            {formMode === 'edit' ? (
+              <Button
+                type='submit'
+                className='mt-4'
+                disabled={!editFormDirty(dirtyFields)}
+              >
+                Submit
+              </Button>
+            ) : formMode === 'move' ? (
+              <Button
+                type='submit'
+                className='mt-4'
+                disabled={!moveFormDirty(dirtyFields)}
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button type='submit' className='mt-4'>
+                Submit
+              </Button>
+            )}
           </form>
         </Form>
       </CardContent>
