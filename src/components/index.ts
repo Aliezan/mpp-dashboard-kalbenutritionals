@@ -10,3 +10,4 @@ export { default as SelectMonth } from '@/components/dashboard/SelectMonth';
 export { default as MPPTableUser } from '@/components/userTable/mpp-table/MPPTable';
 export { default as MPPGapUser } from '@/components/userTable/mpp-gap/MPPGap';
 export { default as Modal } from '@/components/dashboard/Modal';
+export { default as StatusMPPUser } from '@/components/dashboard/StatusMPPUser';

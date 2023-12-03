@@ -17,15 +17,13 @@ const ManageMPP: FC = async () => {
       <DeleteMPPModal />
       <div className='w-full'>
         <div className='container px-20 mx-auto'>
-          <>
-            {session?.user?.role === 'ADMIN' ? (
-              <ManageMPPAdmin />
-            ) : session?.user?.role === 'SUPER' ? (
-              <p>MPP SUPER</p>
-            ) : (
-              <ManageMPPUser />
-            )}
-          </>
+          {session?.user?.role === 'ADMIN' ? (
+            <ManageMPPAdmin />
+          ) : session?.user?.role === 'SUPER' ? (
+            <ManageMPPAdmin />
+          ) : (
+            <ManageMPPUser />
+          )}
         </div>
       </div>
     </section>

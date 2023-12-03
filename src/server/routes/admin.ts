@@ -461,6 +461,78 @@ const adminRouter = router({
       }
       return createMPPRow;
     }),
+  getCurrentMonthCategory: privateProcedure
+    .input(
+      z.object({
+        month: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const currentYear = new Date().getFullYear();
+      const date = new Date(Date.parse(`${input.month} 1, ${currentYear}`));
+      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+      const lastDayOfMonth = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0,
+      );
+      const MPPCategories = await prisma.mPP.findMany({
+        where: {
+          createdAt: {
+            gte: firstDayOfMonth,
+            lte: lastDayOfMonth,
+          },
+        },
+        select: {
+          id: true,
+          Category: true,
+        },
+        distinct: ['Category'],
+      });
+      return MPPCategories;
+    }),
+  getTableDataByCategory: privateProcedure
+    .input(
+      z.object({
+        category: z.string(),
+        month: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const currentYear = new Date().getFullYear();
+      const date = new Date(Date.parse(`${input.month} 1, ${currentYear}`));
+      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+      const lastDayOfMonth = new Date(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        0,
+      );
+
+      const getData = await prisma.mPP.findMany({
+        where: {
+          AND: [
+            {
+              createdAt: {
+                gte: firstDayOfMonth,
+                lte: lastDayOfMonth,
+              },
+            },
+            {
+              Category: input.category,
+            },
+            {
+              Gap: '-1',
+            },
+          ],
+        },
+        select: {
+          Job_Title_Name: true,
+          Status: true,
+          Category: true,
+        },
+      });
+      return getData;
+    }),
 });
 
 export default adminRouter;

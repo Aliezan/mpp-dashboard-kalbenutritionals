@@ -3,7 +3,7 @@
 import React, { FC } from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/server/auth';
-import { StatusMPP, DataInput } from '@/components';
+import { StatusMPP, DataInput, StatusMPPUser } from '@/components';
 
 const Home: FC = async () => {
   const session = await getServerSession(authOptions);
@@ -26,7 +26,9 @@ const Home: FC = async () => {
                 <DataInput />
               </div>
             ) : (
-              <h1>USER</h1>
+              <div className='mt-6'>
+                <StatusMPPUser />
+              </div>
             )}
           </div>
         </div>
