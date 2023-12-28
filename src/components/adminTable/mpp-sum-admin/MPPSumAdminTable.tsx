@@ -10,6 +10,7 @@ const MPPSumAdminTable: FC = () => {
 
   return (
     <div className='container mx-auto ml-[30px] py-10'>
+      {/* @ts-ignore */}
       <DataTable columns={Columns} data={TableData ?? []} />
     </div>
   );
