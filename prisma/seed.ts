@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -12,6 +12,7 @@ async function main() {
       email: 'user@mail.com',
       name: 'User',
       password: userPassword,
+      role: Role.USER,
     },
   });
 
@@ -23,7 +24,7 @@ async function main() {
       email: 'admin@mail.com',
       name: 'Admin',
       password: adminPassword,
-      role: 'ADMIN',
+      role: Role.ADMIN,
     },
   });
 
@@ -35,7 +36,7 @@ async function main() {
       email: 'super@mail.com',
       name: 'Super Admin',
       password: superPassword,
-      role: 'SUPER_ADMIN',
+      role: Role.SUPER,
     },
   });
 
@@ -47,32 +48,11 @@ async function main() {
       email: 'dev@mail.com',
       name: 'dev',
       password: devPassword,
-      role: 'SUPER_ADMIN',
+      role: Role.SUPER,
     },
   });
 
-  const createTablesUser = await prisma.mPP.upsert({
-    where: {
-      userId: '6bab7373-35c3-4f71-b51b-12383253f6ed',
-    },
-    update: {},
-    create: {
-      Employee_ID: '230100010',
-      Employee_Name: 'DWI CAHYO',
-      Join_Date: '2022-01-01T00:00:00Z',
-      Job_Title_Name: 'TEST',
-      Org_Group_Name: 'TEST',
-      Job_Level_Code: 'TEST',
-      Category: 'TEST',
-      Status: 'TEST',
-      MPP: 1,
-      Actual: 1,
-      Gap: 0,
-      userId: '6bab7373-35c3-4f71-b51b-12383253f6ed',
-    },
-  });
-
-  console.log({ user, admin, superAdmin, dev, createTablesUser });
+  console.log({ user, admin, superAdmin, dev });
 }
 main()
   .then(() => prisma.$disconnect())

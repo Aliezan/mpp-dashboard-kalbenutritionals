@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "MPP" ALTER COLUMN "Join_Date" SET DATA TYPE TEXT;

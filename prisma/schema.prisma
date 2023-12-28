@@ -7,30 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+  SUPER
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  password  String
-  createdAt DateTime @default(now())
-  role      String   @default("USER")
-  MPP       MPP?
+  id             String       @id @default(uuid())
+  email          String       @unique
+  name           String
+  password       String
+  createdAt      DateTime     @default(now())
+  role           Role         @default(USER)
+  Org_Group_Name String?
+  MPP            MPP[]
 }
 
 model MPP {
-  user           User      @relation(fields: [userId], references: [id])
-  userId         String    @unique
-  id             String    @id @default(uuid())
-  No             Int       @default(autoincrement())
+  user           User?    @relation(fields: [userId], references: [id])
+  userId         String?
+  id             String   @id @default(uuid())
+  isApproved     Status   @default(PENDING)
   Employee_ID    String?
   Employee_Name  String?
-  Join_Date      DateTime? @db.Date
+  Join_Date      String?
   Job_Title_Name String?
   Org_Group_Name String?
   Job_Level_Code String?
   Category       String?
   Status         String?
-  MPP            Int?
-  Actual         Int?
-  Gap            Int?
+  MPP            String?  @default("1")
+  Actual         String?  @default("1")
+  Gap            String?  @default("0")
+  createdAt      DateTime @default(now())
 }

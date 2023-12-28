@@ -37,7 +37,6 @@
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
     "react/jsx-no-useless-fragment": "off",
-    "eslint-disable jsx-a11y/no-static-element-interactions": "off",
-    "eslint-disable jsx-a11y/click-events-have-key-events": "off"
+    "react/jsx-indent": "off"
   }
 }
