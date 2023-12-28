@@ -15,7 +15,7 @@ const UserModalViewModel = () => {
     email: z.string().email('Masukkan email dengan benar'),
     password: z.string().min(4, 'Masukkan password dengan benar'),
     role: z.enum(['USER', 'ADMIN', 'SUPER']),
-    OrgGroupName: z.string().min(3, 'Masukkan nama organisasi dengan benar'),
+    OrgGroupName: z.string().min(3, 'Masukkan nama Organisasi dengan benar'),
   });
 
   type UserSchemaType = z.infer<typeof userSchema>;
